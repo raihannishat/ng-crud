@@ -1,0 +1,53 @@
+<div class="items-container">
+  <h1>Items</h1>
+
+  @if (error()) {
+    <div class="error" role="alert">{{ error() }}</div>
+  }
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="item-form">
+    <div class="form-row">
+      <input formControlName="name" type="text" placeholder="Name" class="input" />
+      <input formControlName="description" type="text" placeholder="Description (optional)" class="input" />
+      <div class="form-actions">
+        @if (editingId() !== null) {
+          <button type="submit" class="btn btn-primary" [disabled]="form.invalid || loading()">Update</button>
+          <button type="button" class="btn btn-secondary" (click)="cancelEdit()">Cancel</button>
+        } @else {
+          <button type="submit" class="btn btn-primary" [disabled]="form.invalid || loading()">Add</button>
+        }
+      </div>
+    </div>
+  </form>
+
+  @if (loading() && items().length === 0) {
+    <p class="loading">Loading…</p>
+  } @else {
+    <table class="items-table">
+      <thead>
+        <tr>
+          <th>Id</th>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of items(); track item.id) {
+          <tr>
+            <td>{{ item.id }}</td>
+            <td>{{ item.name }}</td>
+            <td>{{ item.description ?? '—' }}</td>
+            <td>
+              <button type="button" class="btn btn-small" (click)="editItem(item)">Edit</button>
+              <button type="button" class="btn btn-small btn-danger" (click)="deleteItem(item)">Delete</button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+    @if (items().length === 0 && !loading()) {
+      <p class="empty">No items yet. Add one above.</p>
+    }
+  }
+</div>
